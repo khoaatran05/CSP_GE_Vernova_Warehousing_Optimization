@@ -2,8 +2,6 @@ import pandas as pd
 import numpy as np
 import regex
 
-
-
 def empty_slot_filter(file):
     df = pd.read_excel(file)
 
@@ -26,7 +24,7 @@ def empty_slot_filter(file):
 
     # Label entries as either valid/invalid depending on locator code
     # Valid if it is an existent locator code in the warehouse; Invalid otherwise
-    df["Entry Status"] = np.where(~(df["Location"].str.strip().str.contains(r"[A-Z]{1,3}\.[0-9]{2}\.[0-9][A-Z]\.[0-9]{2}", regex = True)), "Invalid", "Valid")
+    df["Entry Status"] = np.where(~(df["Location"].str.strip().str.contains(r"[A-Z]{1,3}\.[0-9]{2,3}\.[0-9][A-Z]\.[0-9]{2}", regex = True)), "Invalid", "Valid")
 
     # Identify locations that correspond to rack locator codes
     df["Rack Locations"] = np.where(df["Location"].str.strip().str.contains(r"(AA|BB|CC|QQ|RR|TT|XX|YY|ZZ|[B-H]{1}|[J-Z]{1})\.[0-9]{2}\.[0-9][A-Z]\.[0-9]{2}", regex = True), "Rack",
@@ -42,15 +40,13 @@ def empty_slot_filter(file):
 
     # Create a new column to identify each locator code as either a rack or floor space
     # If netiher, locator code will be set as "Other"
-    df["Inventory Type"] = np.where(df["Floor Locations"] == "Floor", "Floor", np.where(df["Rack Locations"] == "Rack", "Rack", "Other"))
+    df["Inventory Type"] = np.where((df["Floor Locations"] == "Floor") & (df["Rack Locations"] != "Rack"), "Floor", np.where(df["Rack Locations"] == "Rack", "Rack", "Other"))
 
     df = df.sort_values(by = "Location", ascending = True).reset_index()
     df = df.drop(["Rack Locations", "Floor Locations","index"], axis = 1)
 
     df.to_excel("sorted_empty_inventory.xlsx", index = False)
     return df
-
-
 
 # Set file variable as personal path name for empty inventory report
 file = "emptyLocations.xlsx"
