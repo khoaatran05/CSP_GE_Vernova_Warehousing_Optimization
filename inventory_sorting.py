@@ -13,7 +13,7 @@ def empty_slot_filter(file):
     # FEC, GEC, HEC, REC, SPS, WMPS, SEB
     # Floor - A, REC, UU, (L/M/S).00.00.01, I, DOOR.FRONT, SEB
     # Other (exclude from project scope) - HVA, PPP, KANI, OE, OEP, OEC, INTHP, DOMPAL,
-    # DOMPAO, WIP, QC, CAP, PK, PKP
+    # DOMPAO, WIP, QC, CAP, PK, PKP, WIRE
 
     # Standard Format for Locator Codes: YY.01.0A.01 (letter sequence at beginning
     # must match estblished rack/floor codes)
@@ -79,3 +79,4 @@ def empty_slot_filter(file):
 # Set file variable as personal path name for empty inventory report
 file = "emptyLocations.xlsx"
 print(empty_slot_filter(file))
+
